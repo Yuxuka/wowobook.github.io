@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,14 +19,13 @@ body {
   color: #333;
 }
 
-/* 標題 */
 h1 {
   color: #c4628a;
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* 按鈕統一 */
+
 button {
   padding: 8px 12px;
   border-color: #fff;
@@ -83,7 +83,6 @@ button:hover {
   box-sizing: border-box;
 }
 
-/* 篩選區 */
 #filter-panel {
   background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -111,14 +110,14 @@ button:hover {
 }
 
 .filter-label {
-  flex: 0 0 70px;   /* 固定左邊標題寬度 */
+  flex: 0 0 70px;
   padding-top: 12px;
 }
 
 .filter-options {
   flex: 1;
   display: flex;
-  flex-wrap: wrap;   /* 按鈕太長就自動換行 */
+  flex-wrap: wrap;
   gap: 6px;
 }
 
@@ -129,7 +128,6 @@ button:hover {
   font-weight: bold;
 }
 
-/* 卡片 */
 .card {
   background: white;
   border-radius: 20px;
@@ -145,13 +143,11 @@ button:hover {
 }
 
 
-/* 圖片 */
 img {
   width: 100%;
   border-radius: 12px;
 }
 
-/* 星星 */
 .stars {
   cursor: pointer;
   font-size: 18px;
@@ -159,7 +155,6 @@ img {
   color: #fcae1e;
 }
 
-/* modal */
 .modal {
   display: none;
   position: fixed;
@@ -231,7 +226,7 @@ img {
   <div class = "filter-row">
     <div class="filter-label">獲得星數：</div>
     <div class="filter-options">
-    <button data-type="star" data-value="-1"         onclick="setStarFilter(-1)">全部</button>
+    <button data-type="star" data-value="-1" onclick="setStarFilter(-1)">全部</button>
     <button data-type="star" data-value="0" onclick="setStarFilter(0)">未收集</button>
     <button data-type="star" data-value="1" onclick="setStarFilter(1)">1</button>
     <button data-type="star" data-value="2" onclick="setStarFilter(2)">2</button>
@@ -280,18 +275,13 @@ img {
 
 const SHEET_ID = "1OGYjj-yO1yo1o376wLw_k3spZXkPRBCuswlQayksa2w";
 
-// =====================
 // 🌿 狀態（全域變數）
-// =====================
 let currentSheet = "魚";
-let starFilter = [];   // 多選星數
-let timeFilter = [];   // 多選時間
+let starFilter = [];
+let timeFilter = [];
 let periodFilter = [];
 let sortType = "level";
 let sortOrder = "asc"; 
-// asc = 正序
-// desc = 倒序
-// null = 預設
 let filterOpen = false;
 
 function toggleFilters() {
@@ -304,18 +294,12 @@ function toggleFilters() {
   header.innerHTML = filterOpen ? "△ 篩選" : "▽ 篩選";
 }
 
-
-// =====================
-// 📡 資料來源
-// =====================
+// 資料來源
 function getURL(sheetName) {
   return `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
 }
 
-
-// =====================
-// 🔁 切換圖鑑
-// =====================
+// 切換圖鑑
 function switchSheet(name) {
   currentSheet = name;
   document.getElementById("search").value = "";
@@ -335,9 +319,7 @@ function updateActiveTabs() {
   });
 }
 
-// =====================
-// ⭐ 篩選控制
-// =====================
+// 篩選控制
 function setStarFilter(value) {
   if (value === -1) {
     starFilter = [];
@@ -426,8 +408,7 @@ function updateActiveButtons() {
   });
 }
 
-// 🔽 排序
-
+// 排序
 function setSort(type) {
   sortType = type;
   loadData();
@@ -474,7 +455,6 @@ function applySort(result) {
         ? valA.localeCompare(valB)
         : valB.localeCompare(valA);
     }
-
     return sortOrder === "asc"
       ? valA - valB
       : valB - valA;
@@ -551,9 +531,7 @@ function getGroupTitle(key) {
   return key;
 }
 
-// =====================
-// 📥 讀取 + 過濾 + 排序
-// =====================
+// 讀取 + 過濾 + 排序
 function loadData() {
   const keyword = document.getElementById("search").value.toLowerCase();
 
@@ -573,33 +551,29 @@ function loadData() {
     );
   });
 
-      // 🎯 篩選
+      // 篩選
       result = result.filter(item => {
 
-      // ⭐ 獲得星數（多選）
+      // 獲得星數
       if (starFilter.length > 0) {
         const stars = getStars(item.id);
         if (!starFilter.includes(stars)) return false;
       }
         
-      // ⏳ 活躍時期（多選）
+      // 活躍時期
       if (periodFilter.length > 0) {
         const active = item.active_time || "";
 
         const match = periodFilter.some(p => {
-          // 直接選小分類（冰雪季 / 夢光影）
           if (active === p) return true;
-
-          // 選大分類（活動）
           if (PERIOD_GROUPS[p]?.includes(active)) return true;
-
           return false;
         });
 
         if (!match) return false;
       }
       
-       // ⏰ 出沒時間段（多選）
+       // 出沒時間段
       if (timeFilter.length > 0) {
         if (!item.time_range) return false;
 
@@ -611,18 +585,15 @@ function loadData() {
         return true;
       });
 
-      // 🔽 排序
+      // 排序
       result = applySort(result);
 
-      // 🎨 顯示
+      // 顯示
       render(result);
     });
 }
 
-
-// =====================
-// 🎨 畫面渲染
-// =====================
+// 畫面
 function render(data) {
   const count = document.getElementById("result-count");
   count.innerText = `${data.length} 種${currentSheet}`;
@@ -635,7 +606,7 @@ function render(data) {
     return;
   }
 
-// 📦 分組
+// 分組
 const groups = {};
 
 data.forEach(item => {
@@ -664,15 +635,13 @@ if (sortType === "level" || sortType === "stars") {
         : a.localeCompare(b);
     });
   }
-
-  // 預設（第三下）回原始資料順序
   if (!sortOrder) {
     groupKeys = Object.keys(groups);
   }
 
 
 
-// 🧩 生成畫面
+// 畫面
 groupKeys.forEach(key => {
     const section = document.createElement("div");
     section.className = "section";
@@ -715,10 +684,7 @@ groupKeys.forEach(key => {
   });
 }
 
-
-// =====================
-// ⭐ 星星系統
-// =====================
+// 星星系統
 function getStars(id) {
   return Number(localStorage.getItem(id) || 0);
 }
@@ -730,10 +696,7 @@ let current = getStars(id);
   loadData();
 }
 
-
-// =====================
-// 🪟 Modal
-// =====================
+// Modal
 function openModal(item) {
   const modal = document.getElementById("modal");
   const body = document.getElementById("modal-body");
@@ -761,9 +724,8 @@ function closeModal() {
 }
 
 
-// =====================
-// 🚀 初始化
-// =====================
+
+// 初始化
 document.getElementById("sort-order").innerText =
   sortOrder === "asc" ? "⇧" : "⇩";
 document.getElementById("search").addEventListener("input", loadData);
