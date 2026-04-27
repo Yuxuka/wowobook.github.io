@@ -1,1 +1,775 @@
-# yuxuka.guthub.io
+# wowobook-yuxuka.guthub.io
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<title>沃的心動動圖鑑</title>
+
+<style>
+    
+body {
+  font-family: "Huninn", sans-serif;
+  background: #fdf6f0;
+  padding: 20px;
+  color: #333;
+}
+
+/* 標題 */
+h1 {
+  color: #c4628a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 按鈕統一 */
+button {
+  padding: 8px 12px;
+  border-color: #fff;
+  border-radius: 12px;
+  margin: 2px;
+  background: #fff4fc;
+  cursor: pointer;
+  font-family: "Huninn", sans-serif;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #ffd1dc;
+  border-color: #a062c8;
+  transform: translateY(-1px);
+} 
+
+#sort-order {
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 14px;
+  min-width: 48px;
+}
+
+
+.top-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+#sort女網購 {
+  flex: 1;
+  background: #fff;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-family: "Huninn", sans-serif;
+}
+
+#search {
+  flex: 5;
+  min-width: 0;
+  width: 0;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  font-family: "Huninn", sans-serif;
+  box-sizing: border-box;
+}
+
+/* 篩選區 */
+#filter-panel {
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+#filter-header {
+  padding: 12px;
+  text-align: center;
+  curser: pointer;
+  font-size: 18px;
+}
+
+#filter-body {
+  display: none;
+  padding: 12px;
+  border-top: 1px solid #eee;
+}
+
+.filter-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.filter-label {
+  flex: 0 0 70px;   /* 固定左邊標題寬度 */
+  padding-top: 12px;
+}
+
+.filter-options {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;   /* 按鈕太長就自動換行 */
+  gap: 6px;
+}
+
+.active-ui {
+  background: #ffc1d6 !important;
+  color: #8a4b6a;
+  border-color: #a062c8;
+  font-weight: bold;
+}
+
+/* 卡片 */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+
+/* 圖片 */
+img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* 星星 */
+.stars {
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 5px;
+  color: #fcae1e;
+}
+
+/* modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background: #fafaff;
+  margin: 50% auto;
+  padding: 20px;
+  border-radius: 20px;
+  width: 75%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+  
+.uncollected {
+  opacity: 60%;
+  transition: 0.2s;
+}
+
+</style>
+</head>
+
+<body style="color: #836ebd">
+<h1> ⊹˚.沃的心動動圖鑑˖ ࣪⊹ </h1>
+
+<div id="tabs">
+  <button data-sheet="魚" onclick="switchSheet('魚')">°･🐠 魚</button>
+  <button data-sheet="鳥" onclick="switchSheet('鳥')">🦜⸒⸒ 鳥</button>
+  <button data-sheet="食譜" onclick="switchSheet('食譜')">🧁*. 食譜</button>
+</div>
+
+<br>
+
+<div class="top-bar">
+  <select id="sort" onchange="setSort(this.value)">
+    <option value="level">📜 解鎖等級</option>
+    <option value="stars">⭐ 獲得星數</option>
+    <option value="period">⏰ 活躍時間</option>
+    <option value="location">📍 地點</option>
+  </select>
+
+  <button id="sort-order" onclick="toggleSortOrder()">↑</button>
+  
+  <input type="text" id="search" placeholder="🔍 搜尋" />
+</div>
+
+<div id="filter-panel">
+  <div id="filter-header" onclick="toggleFilters()">
+    ▽ 篩選
+  </div>
+  
+<div id="filter-body">
+  <div class = "filter-row">
+    <div class="filter-label">獲得星數：</div>
+    <div class="filter-options">
+    <button data-type="star" data-value="-1"         onclick="setStarFilter(-1)">全部</button>
+    <button data-type="star" data-value="0" onclick="setStarFilter(0)">未收集</button>
+    <button data-type="star" data-value="1" onclick="setStarFilter(1)">1</button>
+    <button data-type="star" data-value="2" onclick="setStarFilter(2)">2</button>
+    <button data-type="star" data-value="3" onclick="setStarFilter(3)">3</button>
+    <button data-type="star" data-value="4" onclick="setStarFilter(4)">4</button>
+    <button data-type="star" data-value="5" onclick="setStarFilter(5)">5</button>
+  </div>
+  </div>
+
+  <div class="filter-row">
+    <div class="filter-label">時間段：</div>
+    <div class="filter-options">
+    <button data-type="time" data-value="" onclick="setTimeFilter('')">全部</button>
+    <button data-type="time" data-value="0~6" onclick="setTimeFilter('0~6')">0~6</button>
+    <button data-type="time" data-value="6~12" onclick="setTimeFilter('6~12')">6~12</button>
+    <button data-type="time" data-value="12~18" onclick="setTimeFilter('12~18')">12~18</button>
+    <button data-type="time" data-value="18~24" onclick="setTimeFilter('18~24')">18~24</button>
+    <button data-type="time" data-value="全日" onclick="setTimeFilter('全日')">全日</button>
+  </div>
+  </div>
+  
+  <div class="filter-row">
+    <div class="filter-label">活躍時期：</div>
+    <div class="filter-options">
+    <button data-type="period" data-value="" onclick="setPeriodFilter('')">全部</button>
+    <button data-type="period" data-value="日常" onclick="setPeriodFilter('日常')">日常</button>
+    <button data-type="period" data-value="活動" onclick="setPeriodFilter('活動')">活動</button>
+  </div>
+  </div>
+
+</div>
+</div>
+
+<div id="result-count"></div>
+
+<div id="grid"></div>
+
+<div id="modal" class="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <span class="close" onclick="closeModal()">✖</span>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+
+const SHEET_ID = "1OGYjj-yO1yo1o376wLw_k3spZXkPRBCuswlQayksa2w";
+
+// =====================
+// 🌿 狀態（全域變數）
+// =====================
+let currentSheet = "魚";
+let starFilter = [];   // 多選星數
+let timeFilter = [];   // 多選時間
+let periodFilter = [];
+let sortType = "level";
+let sortOrder = "asc"; 
+// asc = 正序
+// desc = 倒序
+// null = 預設
+let filterOpen = false;
+
+function toggleFilters() {
+  filterOpen = !filterOpen;
+
+  const body = document.getElementById("filter-body");
+  const header = document.getElementById("filter-header");
+
+  body.style.display = filterOpen ? "block" : "none";
+  header.innerHTML = filterOpen ? "△ 篩選" : "▽ 篩選";
+}
+
+
+// =====================
+// 📡 資料來源
+// =====================
+function getURL(sheetName) {
+  return `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
+}
+
+
+// =====================
+// 🔁 切換圖鑑
+// =====================
+function switchSheet(name) {
+  currentSheet = name;
+  document.getElementById("search").value = "";
+  
+  updateActiveTabs();
+  updateActiveButtons();
+  loadData();
+}
+
+function updateActiveTabs() {
+  document.querySelectorAll("#tabs button").forEach(btn => {
+    btn.classList.remove("active-ui");
+
+    if (btn.dataset.sheet === currentSheet) {
+      btn.classList.add("active-ui");
+    }
+  });
+}
+
+// =====================
+// ⭐ 篩選控制
+// =====================
+function setStarFilter(value) {
+  if (value === -1) {
+    starFilter = [];
+  } else {
+    if (starFilter.includes(value)) {
+      starFilter = starFilter.filter(v => v !== value);
+    } else {
+      starFilter.push(value);
+    }
+  }
+
+  updateActiveButtons();
+  loadData();
+}
+
+
+function setTimeFilter(value) {
+  if (!value) {
+    timeFilter = [];
+  } else {
+    if (timeFilter.includes(value)) {
+      timeFilter = timeFilter.filter(v => v !== value);
+    } else {
+      timeFilter.push(value);
+    }
+  }
+
+  updateActiveButtons();
+  loadData();
+}
+
+
+function setPeriodFilter(value) {
+  if (!value) {
+    periodFilter = [];
+  } else {
+    if (periodFilter.includes(value)) {
+      periodFilter = periodFilter.filter(v => v !== value);
+    } else {
+      periodFilter.push(value);
+    }
+  }
+
+  updateActiveButtons();
+  loadData();
+}
+
+
+
+function updateActiveButtons() {
+  document.querySelectorAll("#filter-panel button").forEach(btn => {
+    btn.classList.remove("active-ui");
+
+    const type = btn.dataset.type;
+    const value = btn.dataset.value;
+
+    if (type === "star") {
+      if (value === "-1" && starFilter.length === 0) {
+        btn.classList.add("active-ui");
+      }
+
+      if (starFilter.includes(Number(value))) {
+        btn.classList.add("active-ui");
+      }
+    }
+
+    if (type === "time") {
+      if (value === "" && timeFilter.length === 0) {
+        btn.classList.add("active-ui");
+      }
+
+      if (timeFilter.includes(value)) {
+        btn.classList.add("active-ui");
+      }
+    }
+    
+    if (type === "period") {
+      if (value === "" && periodFilter.length === 0) {
+        btn.classList.add("active-ui");
+      }
+
+      if (periodFilter.includes(value)) {
+        btn.classList.add("active-ui");
+      }
+    }
+  });
+}
+
+// 🔽 排序
+
+function setSort(type) {
+  sortType = type;
+  loadData();
+}
+
+function toggleSortOrder() {
+  sortOrder = sortOrder === "asc" ? "desc" : "asc";
+
+  document.getElementById("sort-order").innerText =
+    sortOrder === "asc" ? "⇧" : "⇩";
+
+  loadData();
+}
+
+
+function applySort(result) {
+  if (!sortType || !sortOrder) return result;
+
+  result.sort((a, b) => {
+    let valA, valB;
+
+    if (sortType === "level") {
+      valA = Number(a.level || 0);
+      valB = Number(b.level || 0);
+    }
+
+    if (sortType === "stars") {
+      valA = getStars(a.id);
+      valB = getStars(b.id);
+    }
+
+    if (sortType === "period") {
+      valA = a.active_time || "";
+      valB = b.active_time || "";
+    } 
+    
+    if (sortType === "location") {
+      valA = a.location || "";
+      valB = b.location || "";
+    }
+
+    if (typeof valA === "string") {
+      return sortOrder === "asc"
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
+    }
+
+    return sortOrder === "asc"
+      ? valA - valB
+      : valB - valA;
+  });
+
+  return result;
+}
+
+const LOCATION_GROUPS = {
+  "河流": ["淺水河", "巨木河", "靜河", "霞光河"],
+  "溫泉山": ["遺跡", "溫泉山湖", "火山湖", "溫泉山", "溫泉", "石岸崖", "舊海", "冰晶魚事件, 舊海", "冰晶魚事件"],
+  "森林": ["小鹿塔", "森林湖", "森林島", "靈橡松林", "跳跳台", "東海"],
+  "漁村": ["漁村東棧", "漁村廣場", "碼頭", "燈塔", "緩風海"],
+  "花田": ["紫光海灘", "風車花田", "鯨魚山", "鯨魚海", "「八爪娛」事件, 鯨魚海", "「八爪娛」事件", "草原潮"],
+  "城郊": ["城郊湖"]
+};
+
+const PERIOD_GROUPS = {
+    "活動": ["冰雪季", "夢光影"]
+}
+
+function isEventMode() {
+  return periodFilter.includes("活動");
+}
+
+function getGroupKey(item) {
+  if (sortType === "level") return item.level || "0";
+
+  if (sortType === "period") {
+      const period = item.active_time || "";
+      
+      for (const [groupName, subPeriods] of Object.entries(PERIOD_GROUPS)) {
+          if (subPeriods.includes(period)) {
+              if (groupName === "活動" && isEventMode()) {
+                  return period;
+              }
+              return groupName;
+          }
+      }
+      
+      return period || "未知";
+  }
+  
+  
+  if (sortType === "location") {
+    const loc = item.location || "";
+
+    for (const [groupName, subLocations] of Object.entries(LOCATION_GROUPS)) {
+      if (subLocations.includes(loc)) {
+        return groupName;
+      }
+    }
+
+    return loc || "未知地點";
+  }
+
+  if (sortType === "stars") return getStars(item.id);
+
+  return item.level || "0";
+}
+
+
+function getGroupTitle(key) {
+  if (sortType === "level") return `📜 等級 ${key}`;
+  if (sortType === "period") return `⏰ ${key}`;
+  if (sortType === "location") return `📍 ${key}`;
+  if (sortType === "stars") {
+      if (key === "0") {
+          return `未獲得`;
+      } else {
+  return `⭐ ${key} 星`;
+    }
+  }
+  return key;
+}
+
+// =====================
+// 📥 讀取 + 過濾 + 排序
+// =====================
+function loadData() {
+  const keyword = document.getElementById("search").value.toLowerCase();
+
+  fetch(getURL(currentSheet))
+    .then(res => res.json())
+    .then(data => {
+
+      // 🔍 搜尋
+      let result = data.filter(item => {
+        return (
+        (item.name && item.name.toLowerCase().includes(keyword)) ||
+        (item.location && item.location.toLowerCase().includes(keyword)) ||
+        (item.time_range && item.time_range.toLowerCase().includes(keyword)) ||
+        (item.active_time && item.active_time.toLowerCase().includes(keyword)) ||
+        (item.weather && item.weather.toLowerCase().includes(keyword)) ||
+        (item.ingredients && item.ingredients.toLowerCase().includes(keyword))
+    );
+  });
+
+      // 🎯 篩選
+      result = result.filter(item => {
+
+      // ⭐ 獲得星數（多選）
+      if (starFilter.length > 0) {
+        const stars = getStars(item.id);
+        if (!starFilter.includes(stars)) return false;
+      }
+        
+      // ⏳ 活躍時期（多選）
+      if (periodFilter.length > 0) {
+        const active = item.active_time || "";
+
+        const match = periodFilter.some(p => {
+          // 直接選小分類（冰雪季 / 夢光影）
+          if (active === p) return true;
+
+          // 選大分類（活動）
+          if (PERIOD_GROUPS[p]?.includes(active)) return true;
+
+          return false;
+        });
+
+        if (!match) return false;
+      }
+      
+       // ⏰ 出沒時間段（多選）
+      if (timeFilter.length > 0) {
+        if (!item.time_range) return false;
+
+          const match = timeFilter.some(t => item.time_range.includes(t));
+          if (!match) return false;
+        }
+        
+
+        return true;
+      });
+
+      // 🔽 排序
+      result = applySort(result);
+
+      // 🎨 顯示
+      render(result);
+    });
+}
+
+
+// =====================
+// 🎨 畫面渲染
+// =====================
+function render(data) {
+  const count = document.getElementById("result-count");
+  count.innerText = `${data.length} 種${currentSheet}`;
+  
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  if (data.length === 0) {
+    grid.innerHTML = "<p><h4>沃沃，找不到這個東東沃⋯⋯(つω-｀)</h4></p>";
+    return;
+  }
+
+// 📦 分組
+const groups = {};
+
+data.forEach(item => {
+  const key = getGroupKey(item);
+
+  if (!groups[key]) {
+      groups[key] = [];
+  }
+
+  groups[key].push(item);
+});
+
+// 分組排序
+let groupKeys = Object.keys(groups);
+
+if (sortType === "level" || sortType === "stars") {
+   groupKeys.sort((a, b) => {
+      return sortOrder === "desc"
+        ? Number(b) - Number(a)
+        : Number(a) - Number(b);
+    });
+ } else if (sortType === "location") {
+    groupKeys.sort((a, b) => {
+      return sortOrder === "desc"
+        ? b.localeCompare(a)
+        : a.localeCompare(b);
+    });
+  }
+
+  // 預設（第三下）回原始資料順序
+  if (!sortOrder) {
+    groupKeys = Object.keys(groups);
+  }
+
+
+
+// 🧩 生成畫面
+groupKeys.forEach(key => {
+    const section = document.createElement("div");
+    section.className = "section";
+
+    section.innerHTML = `
+      <h2>${getGroupTitle(key)}</h2>
+      <div class="grid"></div>
+    `;
+
+    const innerGrid = section.querySelector(".grid");
+
+    groups[key].forEach(item => {
+      const stars = getStars(item.id);
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      if (stars === 0) {
+        card.classList.add("uncollected");
+      }
+
+      card.onclick = () => openModal(item);
+
+      card.innerHTML = `
+        <img src="${item.image}" />
+        <h3>${item.name}</h3>
+        ${item.location ? `<p>${item.location}</p>` : ""}
+        ${item.time_range ? `<p>${item.time_range}</p>` : ""}
+        ${item.ingredients ? `<p>${item.ingredients}</p>` : ""}
+
+        <div class="stars" onclick="event.stopPropagation(); setStars('${item.id}')">
+          ${"✦".repeat(stars)}${"✧".repeat(5 - stars)}
+        </div>
+      `;
+
+      innerGrid.appendChild(card);
+    });
+
+    grid.appendChild(section);
+  });
+}
+
+
+// =====================
+// ⭐ 星星系統
+// =====================
+function getStars(id) {
+  return Number(localStorage.getItem(id) || 0);
+}
+
+function setStars(id) {
+let current = getStars(id);
+  current = (current + 1) % 6;
+  localStorage.setItem(id, current);
+  loadData();
+}
+
+
+// =====================
+// 🪟 Modal
+// =====================
+function openModal(item) {
+  const modal = document.getElementById("modal");
+  const body = document.getElementById("modal-body");
+
+  body.innerHTML = `
+    <img src="${item.image}" />
+    <h2>${item.name}</h2>
+    <p>解鎖等級：${item.level}</p>
+
+    ${item.active_time ? `<p>⏳ 活躍時期：${item.active_time}</p>` : ""}
+    ${item.location ? `<p>📍 地點：${item.location}</p>` : ""}
+    ${item.time_range ? `<p>⏰ 時間：${item.time_range}</p>` : ""}
+    ${item.weather ? `<p>🌦 天氣：${item.weather}</p>` : ""}
+    ${item.tool ? `<p>🍳 廚具：${item.tool}</p>` : ""}
+    ${item.ingredients ? `<p>🍰 食材：${item.ingredients}</p>` : ""}
+    ${item.description ? `<p>${item.description}</p>` : ""}
+    ${item.note ? `<p>${item.note}</p>` : ""}
+  `;
+
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+
+// =====================
+// 🚀 初始化
+// =====================
+document.getElementById("sort-order").innerText =
+  sortOrder === "asc" ? "⇧" : "⇩";
+document.getElementById("search").addEventListener("input", loadData);
+updateActiveTabs();
+updateActiveButtons();
+loadData();
+
+</script>
+</body>
