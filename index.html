@@ -24,7 +24,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-
 button {
   padding: 8px 12px;
   border-color: #fff;
@@ -52,7 +51,6 @@ button:hover {
   min-width: 48px;
 }
 
-
 .top-bar {
   display: flex;
   gap: 10px;
@@ -77,7 +75,7 @@ button:hover {
   padding: 10px;
   border-radius: 12px;
   border: 1px solid #ddd;
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Huninn", sans-serif;
   box-sizing: border-box;
 }
@@ -167,7 +165,7 @@ img {
 
 .modal-content {
   background: #fafaff;
-  margin: 50% auto;
+  margin: 15% auto;
   padding: 20px;
   border-radius: 20px;
   width: 75%;
@@ -196,9 +194,10 @@ img {
 <h1> ⊹˚.沃的心動動圖鑑˖ ࣪⊹ </h1>
 
 <div id="tabs">
-  <button data-sheet="魚" onclick="switchSheet('魚')">°･🐠 魚</button>
-  <button data-sheet="鳥" onclick="switchSheet('鳥')">🦜⸒⸒ 鳥</button>
-  <button data-sheet="食譜" onclick="switchSheet('食譜')">🧁*. 食譜</button>
+    <button data-sheet="魚" onclick="switchSheet('魚')">°･🐠 魚</button>
+    <button data-sheet="鳥" onclick="switchSheet('鳥')">🦜⸒⸒ 鳥</button>
+    <button data-sheet="蟲" onclick="switchSheet('蟲')">🐞〟蟲</button>
+    <button data-sheet="食譜" onclick="switchSheet('食譜')">🧁*. 食譜</button>
 </div>
 
 <br>
@@ -463,16 +462,17 @@ function applySort(result) {
 }
 
 const LOCATION_GROUPS = {
-  "河流": ["淺水河", "巨木河", "靜河", "霞光河"],
-  "溫泉山": ["遺跡", "溫泉山湖", "火山湖", "溫泉山", "溫泉", "石岸崖", "舊海", "冰晶魚事件, 舊海", "冰晶魚事件"],
-  "森林": ["小鹿塔", "森林湖", "森林島", "靈橡松林", "跳跳台", "東海"],
-  "漁村": ["漁村東棧", "漁村廣場", "碼頭", "燈塔", "緩風海"],
-  "花田": ["紫光海灘", "風車花田", "鯨魚山", "鯨魚海", "「八爪娛」事件, 鯨魚海", "「八爪娛」事件", "草原潮"],
-  "城郊": ["城郊湖"]
+  "河流": ["淺水河", "巨木河", "靜河", "霞光河", "河畔"],
+  "溫泉山": ["遺跡", "引蟲出洞事件", "溫泉山湖", "火山湖", "溫泉山", "溫泉", "石岸崖", "舊海", "冰晶魚事件, 舊海", "冰晶魚事件", "溫泉山-溫泉", "溫泉山-火山湖", "溫泉山-石岸崖", "溫泉山-遺跡", "溫泉山湖畔", "引蟲出洞事件-遺跡"],
+  "森林": ["小鹿塔", "森林湖", "森林島", "靈橡松林", "跳跳台", "東海", "冰晶蝴蝶事件", "森林-小鹿塔", "森林-靈橡松林", "森林-跳跳台", "森林-森林島", "森林湖畔"],
+  "漁村": ["漁村東棧", "漁村廣場", "碼頭", "燈塔", "緩風海", "漁村-漁村廣場", "漁村-碼頭", "漁村-燈塔", "漁村-漁村東棧"],
+  "花田": ["紫光海灘", "風車花田", "鯨魚山", "鯨魚海", "「八爪娛」事件, 鯨魚海", "「八爪娛」事件", "草原潮", "花田-鯨魚山", "花田-紫光海灘", "花田-風車花田"],
+  "城郊": ["城郊湖", "城郊湖畔"]
 };
 
 const PERIOD_GROUPS = {
-    "活動": ["冰雪季", "夢光影"]
+    "活動": ["夢光影"],
+    "過去活動": ["冰雪季"]
 }
 
 function isEventMode() {
@@ -668,6 +668,7 @@ groupKeys.forEach(key => {
         <h3>${item.name}</h3>
         ${item.location ? `<p>${item.location}</p>` : ""}
         ${item.time_range ? `<p>${item.time_range}</p>` : ""}
+        ${item.weather ? `<p>${item.weather}</p>` : ""}
         ${item.ingredients ? `<p>${item.ingredients}</p>` : ""}
 
         <div class="stars" onclick="event.stopPropagation(); setStars('${item.id}')">
@@ -709,8 +710,7 @@ function openModal(item) {
     ${item.weather ? `<p>🌦 天氣：${item.weather}</p>` : ""}
     ${item.tool ? `<p>🍳 廚具：${item.tool}</p>` : ""}
     ${item.ingredients ? `<p>🍰 食材：${item.ingredients}</p>` : ""}
-    ${item.description ? `<p>${item.description}</p>` : ""}
-    ${item.note ? `<p>${item.note}</p>` : ""}
+    ${item.tidbit ? `<p>${item.tidbit}</p>` : ""}
   `;
 
   modal.style.display = "block";
