@@ -131,6 +131,7 @@ button:hover {
   padding: 10px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.08);
   text-align: center;
+  font-size: 12px;
 }
 
 .grid {
@@ -665,7 +666,7 @@ groupKeys.forEach(key => {
       card.onclick = () => openModal(item);
 
       card.innerHTML = `
-        <h3>${item.name}</h3>
+        <h4>${item.name}</h4>
         ${item.location ? `<p>${item.location}</p>` : ""}
         ${item.time_range ? `<p>${item.time_range}</p>` : ""}
         ${item.weather ? `<p>${item.weather}</p>` : ""}
